@@ -127,6 +127,50 @@ class ParticipantSerializer(serializers.ModelSerializer):
         ]
 
 
+class AdminTeamMemberSerializer(serializers.ModelSerializer):
+    fullName = serializers.CharField(source="full_name")
+    telegramUsername = serializers.CharField(source="telegram_username")
+    createdAt = serializers.DateTimeField(source="created_at")
+
+    class Meta:
+        model = TeamMember
+        fields = ["id", "fullName", "phone", "telegramUsername", "role", "createdAt"]
+
+
+class AdminParticipantSerializer(serializers.ModelSerializer):
+    fullName = serializers.CharField(source="full_name")
+    telegramUsername = serializers.CharField(source="telegram_username")
+    hasTeam = serializers.BooleanField(source="has_team")
+    teamName = serializers.CharField(source="team_name")
+    teamSize = serializers.IntegerField(source="team_size")
+    hasIdea = serializers.BooleanField(source="has_idea")
+    ideaDescription = serializers.CharField(source="idea_description")
+    teamId = serializers.CharField(source="team_id")
+    createdAt = serializers.DateTimeField(source="created_at")
+    updatedAt = serializers.DateTimeField(source="updated_at")
+    teamMembers = AdminTeamMemberSerializer(source="team_members", many=True, read_only=True)
+
+    class Meta:
+        model = Participant
+        fields = [
+            "id",
+            "fullName",
+            "phone",
+            "telegramUsername",
+            "hasTeam",
+            "teamName",
+            "teamSize",
+            "role",
+            "hasIdea",
+            "ideaDescription",
+            "status",
+            "teamId",
+            "createdAt",
+            "updatedAt",
+            "teamMembers",
+        ]
+
+
 class ParticipantUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participant

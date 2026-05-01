@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Participant, Team
 from .serializers import (
+    AdminParticipantSerializer,
     ParticipantSerializer,
     ParticipantUpdateSerializer,
     RegistrationSerializer,
@@ -67,7 +68,7 @@ def admin_login(request):
 
 
 class AdminRegistrationsView(generics.ListAPIView):
-    serializer_class = ParticipantSerializer
+    serializer_class = AdminParticipantSerializer
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
@@ -95,6 +96,10 @@ class AdminRegistrationsView(generics.ListAPIView):
 
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response({"registrations": serializer.data})
+
 
 class AdminRegistrationDetailView(generics.RetrieveUpdateAPIView):
     queryset = Participant.objects.prefetch_related("team_members").all()
@@ -103,7 +108,7 @@ class AdminRegistrationDetailView(generics.RetrieveUpdateAPIView):
     def get_serializer_class(self):
         if self.request.method == "PATCH":
             return ParticipantUpdateSerializer
-        return ParticipantSerializer
+        return AdminParticipantSerializer
 
     def perform_update(self, serializer):
         participant = serializer.save()
